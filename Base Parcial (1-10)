@@ -1,0 +1,162 @@
+-- Creacion de las tablas 
+-----------------------------------1
+create table nombreBase.empleado(
+idEmpleado int IDENTITY(1,1),
+cedula int NOT NULL,
+fechaNacimiento date NOT NULL,
+idGenero int NOT NULL,
+primerNombre varchar(30) NOT NULL,
+segundoNombre varchar(30) NOT NULL,
+primerApellido varchar(30) NOT NULL,
+segundoApellido varchar(30) NOT NULL,
+nombreEmpleadoLogin varchar(30) NOT NULL,
+email varchar(30) NOT NULL,
+idDepartamento int NOT NULL,
+fechaContratacion date NOT NULL,
+
+--Declaración de atributos unicos
+CONSTRAINT cedulaEmpleado UNIQUE(cedula),
+CONSTRAINT emailEmpleado UNIQUE(email),
+
+--Declaración PK
+PRIMARY KEY (idEmpleado),
+
+--Declaración FK
+FOREIGN KEY (idGenero) REFERENCES genero(idGenero),
+FOREIGN KEY (idDepartamento) REFERENCES departamento(idDepartamento)
+);
+
+-----------------------------------2
+create table nombreBase.genero(
+idGenero int IDENTITY(1,1),
+detalle varchar(30) NOT NULL,
+
+--Declaración PK
+PRIMARY KEY (idGenero)
+);
+
+-----------------------------------3
+create table nombreBase.departamento(
+idDepartamento int IDENTITY(1,1),
+abreviaturaDepartamento varchar(30) NOT NULL,
+cuentaCorreoDepartamental varchar(30) NOT NULL,
+detalle varchar(30) NOT NULL,
+
+--Declaración de atributos unicos
+CONSTRAINT emailDepartamental UNIQUE(cuentaCorreoDepartamental),
+
+--Declaración PK
+PRIMARY KEY (idDepartamento)
+);
+
+-----------------------------------4
+create table nombreBase.contactoEmergencia(
+idContantoEmergencia int IDENTITY(1,1),
+idEmpleado int NOT NULL,
+idGenero int NOT NULL,
+idParentesco int NOT NULL,
+primerNombre varchar(30) NOT NULL,
+primerApellido varchar(30) NOT NULL,
+telefono int NOT NULL,
+
+--Declaración de atributos unicos
+CONSTRAINT telefonoContactoEmergencia UNIQUE(telefono),
+
+--Declaración PK
+PRIMARY KEY (idContantoEmergencia),
+
+--Declaración FK
+FOREIGN KEY (idEmpleado) REFERENCES empleado(idEmpleado),
+FOREIGN KEY (idGenero) REFERENCES genero(idGenero),
+FOREIGN KEY (idParentesco) REFERENCES parentesco(idParentesco)
+);
+
+-----------------------------------5
+create table nombreBase.parentesco(
+idParentesco int IDENTITY(1,1),
+detalle varchar(30) NOT NULL,
+
+--Declaración PK
+PRIMARY KEY (idParentesco)
+);
+
+-----------------------------------6
+create table nombreBase.pais(
+idPais int IDENTITY(1,1),
+abreviaturaPais varchar(30) NOT NULL,
+detalle varchar(30) NOT NULL,
+
+--Declaración PK
+PRIMARY KEY (idPais)
+);
+
+-----------------------------------7
+create table nombreBase.provinciaEstado(
+idProvinciaEstado int IDENTITY(1,1),
+idPais int NOT NULL,
+nombre varchar(30) NOT NULL,
+
+--Declaración PK
+PRIMARY KEY (idProvinciaEstado),
+
+--Declaración FK
+FOREIGN KEY (idPais) REFERENCES pais(idPais)
+);
+
+-----------------------------------8
+create table nombreBase.cliente(
+cedulaCliente int NOT NULL,
+idPais int NOT NULL,
+idProvinciaEstado int NOT NULL,
+tipoCliente int NOT NULL,
+categoria varchar(30) NOT NULL,
+senas varchar(30) NOT NULL,
+
+--Declaración de atributos unicos
+CONSTRAINT cedulaUnicaCliente UNIQUE(cedulaCliente),
+
+--Declaracion de restricciones check
+CONSTRAINT CHK_categoriaCliente CHECK (categoria ='A' OR categoria ='B' OR categoria ='C' OR categoria ='D'),
+
+--Declaración PK
+PRIMARY KEY (cedulaCliente),
+
+--Declaración FK
+FOREIGN KEY (idPais) REFERENCES pais(idPais),
+FOREIGN KEY (idProvinciaEstado) REFERENCES provinciaEstado(idProvinciaEstado)
+);
+
+-----------------------------------9
+create table nombreBase.clienteFisico(
+cedulaCliente int NOT NULL,
+idGenero int NOT NULL,
+primerNombre varchar(30) NOT NULL,
+segundoNombre varchar(30) NOT NULL,
+primerApellido varchar(30) NOT NULL,
+segundoApellido varchar(30) NOT NULL,
+
+--Declaración de atributos unicos
+CONSTRAINT cedulaUnicaCliente UNIQUE(cedulaCliente),
+
+--Declaración PK
+PRIMARY KEY (cedulaCliente),
+
+--Declaración FK
+FOREIGN KEY (idGenero) REFERENCES genero(idGenero),
+FOREIGN KEY (cedulaCliente) REFERENCES cliente(cedulaCliente)
+);
+
+-----------------------------------10
+create table nombreBase.clienteJuridico(
+cedualCliente int NOT NULL,
+razonSocial varchar(30) NOT NULL,
+
+--Declaración de atributos unicos
+CONSTRAINT cedulaUnicaCliente UNIQUE(cedulaCliente),
+
+--Declaración PK
+PRIMARY KEY (cedulaCliente),
+
+--Declaracion FK
+FOREIGN KEY (cedulaCliente) REFERENCES cliente(cedulaCliente)
+);
