@@ -42,17 +42,25 @@ create table .producto(
   idProveedor FOREIGN KEY REFERENCES proveedores(idProveedor),
 );
 
-create table .ordenCompra(
+create table tiendatEC.ordenCompra(
   idOrden int IDENTITY(1,1) PRIMARY KEY,
   cedulaCliente int NOT NULL,
   fecha date NOT NULL,
   montoTotal money NOT NULL,
   fechaAplicacionDescuento date,
-  /*montoDescuento money NOT NULL,*/
+  montoDescuento int DEFAULT '0',
   idCuponDescuento int,
   idCuponDescuento FOREIGN KEY REFERENCES cuponDescuento(idCuponDescuento),
   cedulaCliente FOREIGN KEY REFERENCES cliente(cedulaCliente),
 );
+
+CREATE TRIGGER actualizarDescuento 
+AFTER INSERT ON tiendaTEC.ordenCompra
+AS BEGIN 
+INSERT ON ordenCompra.montoDescuento
+SELECT porcentajeDescuento FROM tiendaTEC.cuponDescuento
+UPDATE montoDescuento
+
 
 create table .ordenDeCompraEstado(
   idEstado int IDENTITY(1,1) PRIMARY KEY,
@@ -105,13 +113,17 @@ create table .ordenCompraCancelada(
 );
 
 /*Función #1 */
-create function productoMasVendido(@fecha1 date, @fecha2 date)
-returns int
+create function productoMasVendido(@fecha1 varchar(50),@fecha2 varchar(50))
+returns table
 as
-begin
-return (select * from .ordenCompra 
-where .ordenCompra.fecha BETWEEN @fecha1 and @fecha2
-join .item on .item.idOrden = .ordenCompra.idOrden)
+return(
+    select top 1 item.idProducto,count(item.idProducto) as cantidad
+    from ordenCompra join item 
+    on ordenCompra.idOrden=item.idOrden
+    where ordenCompra.fecha BETWEEN @fecha1 and @fecha2
+    group by item.idProducto
+    order by cantidad desc 
+    )
 end
 go
 
@@ -120,9 +132,10 @@ create function descuentoAplicado(@cuponDescuento int)
 returns int
 as
 begin
-return (select * from .ordenCompra 
-where .ordenCompra.idCuponDescuento = @cuponDescuento
-join .cuponDescuento on .cuponDescuento.porcentajeDescuento)
+return(
+    select montoDescuento from tiendaTEC.ordenCompra 
+    where tiendaTEC.ordenCompra.idCuponDescuento = @cuponDescuento
+    )
 end
 go
 
