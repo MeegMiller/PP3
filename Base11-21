@@ -123,34 +123,39 @@ create table tiendaTEC.ordenCancelada(
 );
 
 /*Función #1 */
-create function productoMasVendido(@fecha1 varchar(50),@fecha2 varchar(50))
-returns table
-as
-return(
-    select top 1 tiendaTEC.item.idProducto,count(item.idProducto) as cantidad
-    from ordenCompra join item 
-    on tiendaTEC.ordenCompra.idOrden=item.idOrden
-    where ordenCompra.fecha BETWEEN @fecha1 and @fecha2
-    group by item.idProducto
-    order by cantidad desc 
+CREATE FUNCTION productoMasVendido(@fecha1 varchar(50),@fecha2 varchar(50))
+RETURNS table
+AS
+RERURN(
+    SELECT TOP 1 tiendaTEC.item.idProducto,count(item.idProducto) AS cantidad
+    FROM ordenCompra JOIN item 
+    ON tiendaTEC.ordenCompra.idOrden=item.idOrden
+    WHERE ordenCompra.fecha BETWEEN @fecha1 and @fecha2
+    GROUP BY item.idProducto
+    ORDER BY cantidad DESC 
     )
-end
-go
+END
+GO
 
 /*Función #2 */
-create function descuentoAplicado(@cuponDescuento int)
-returns int
-as
-begin
-return(
-    select montoDescuento from tiendaTEC.ordenCompra 
-    where tiendaTEC.ordenCompra.idCuponDescuento = @cuponDescuento
+CREATE FUNCTION descuentoAplicado(@cuponDescuento int)
+RETURNS int
+AS
+BEGIN
+RETURN(
+    SELECT montoDescuento FROM tiendaTEC.ordenCompra 
+    WHERE tiendaTEC.ordenCompra.idCuponDescuento = @cuponDescuento
     )
-end
-go
+END
+GO
 
 /*Procedimiento almacenado #5*/
-
+CREATE PROCEDURE cuponesVigentes @fecha1 date, @fecha2 date
+AS 
+SELECT * FROM tiendaTEC.cuponDescuento
+WHERE cuponDescuento.fechaInicioVigencia BETWEEN @fecha1 AND @fecha2 
+AND cuponDescuento.fechaFinVigencia BETWEEN @fecha1 AND @fecha2
+GO
 
 /*Procedimiento almacenado #6*/
 
