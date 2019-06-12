@@ -111,9 +111,11 @@ idProvinciaEstado int NOT NULL,
 tipoCliente int NOT NULL,
 categoria varchar(30) NOT NULL,
 senas varchar(30) NOT NULL,
+email varchar(30) NOT NULL,
 
 --Declaración de atributos unicos
 CONSTRAINT cedulaUnicaCliente UNIQUE(cedulaCliente),
+CONSTRAINT emailCliente UNIQUE(email),
 
 --Declaracion de restricciones check
 CONSTRAINT CHK_categoriaCliente CHECK (categoria ='A' OR categoria ='B' OR categoria ='C' OR categoria ='D'),
@@ -160,3 +162,64 @@ PRIMARY KEY (cedulaCliente),
 --Declaracion FK
 FOREIGN KEY (cedulaCliente) REFERENCES cliente(cedulaCliente)
 );
+
+--Requerimientos
+
+--Funcionalidad #3: funcion que recibe un numero de cliente y un mes/año y determina el monto promedio de compras del mes/año indicado
+
+create function promedioDeCompras(@cedulaCliente int, @fecha1 date, @fecha2 date)
+returns int
+as
+begin
+return ( SELECT AVG(montoTotal)
+FROM nombreBase.ordenCompra
+where nombreBase.ordenCompra.cedulaCliente = @cedulaCliente AND nombreBase.ordenCompra.fecha BETWEEN @fecha1 and @fecha2)
+end
+go
+
+--Procedimiento Almacenado #4: cuando se ingrese un nuevo cupon de descuento, notifique mediante un correo electrónico a todos los clientes para los cuales está disponible el cupón
+
+CREATE PROCEDURE notificacionCuponNuevo
+  @nuevoCupon int,
+  @disponibilidadCupon varchar(30),
+  @myRecipientList varchar(max),
+AS
+  SET @myRecipientList = STUFF((SELECT ';' + email 
+    FROM nombreBase.cliente 
+    WHERE @disponibilidadCupon = categoria FOR XML PATH('')),1,1,''),
+  EXEC msdb.dbo.sp_send_dbmail  
+    @profile_name = 'Tienda TEC', --emisor del correo
+    @recipients = @myRecipientList, --lista de correos seleccionado
+    @query = 'SELECT idCuponDescuento
+              FROM nombreBase.cuponDescuento 
+              WHERE @nuevoCupon = idCuponDescuento, 
+    @body = 'HAY DISPONIBLE UN NUEVO CUPON DE DESCUENTO QUE PUEDE APLICAR', --mensaje del correo
+    @subject = 'NOTIFICACION DE CUPONES DE DESCUENTO',  --asunto del correo
+    @attach_query_result_as_file = 0 ; --es cero porque lo que se quiere enviar en el mensaje y no la consulta
+GO;
+
+--Procedimiento #7: se recibe un nuevo producto y genera el registro en el inventario
+
+CREATE PROCEDURE registroInventario
+  @idProducto int,
+  @cantidadDisponible int,
+
+AS
+BEGIN
+  UPDATE inventario SET cantidadDisponible = cantidadDisponible + @cantidadDisponible
+  FROM nombreBase.producto
+  WHERE @idProducto = idProducto
+END
+
+--Trigger #8: monitorea la tabla producto y cuando la cantidad disponible del producto es inferior a la cantidad minimaa permita, se envía un correo al departamento
+
+
+
+
+
+
+
+
+    
+    
+    
