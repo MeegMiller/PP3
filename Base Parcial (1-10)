@@ -246,7 +246,7 @@ CREATE VIEW informaciónClienteCompras
 AS   
 SELECT nombreBase.cliente.idPais,nombreBase.cliente.idProvinciaEstado, nombreBase.cliente.tipoCliente,nombreBase.cliente.categoria,nombreBase.cliente.senas,nombreBase.ordenCompra.fecha,nombreBase.ordenCompra.montoDescuento,nombreBase.ordenCompra.montoTotal,nombreBase.ordenCompra.fechaAplicacionDescuento,nombreBase.ordenCompra.idEstado
 FROM nombreBase.cliente, nombreBase.ordenCompra
-WHERE nombreBase.ordenCompra.idCuponDescuento <> NULL
+WHERE nombreBase.ordenCompra.idCuponDescuento IS NULL
 GO 
 
 --Views #12: vista que contenga la información de las ordenes de compras canceladas en el mes actual así como la razón de cancelación 
