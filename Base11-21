@@ -170,8 +170,8 @@ CREATE TRIGGER auditoriaProveedores
 AFTER UPDATE, INSERT ON tiendaTEC.proveedores
 AS BEGIN
 FOR EACH ROW
-INSERT INSERT INTO tiendaTEC.bitacoraRegistroAuditoria (fechaHora, detalle, idTipoRegistroAuditoria, idEmpleado)
-VALUES (getdatetime(), new.detalle, new.idTipoRegistroAuditoria, new.idEmpleado)
+INSERT tiendaTEC.bitacoraRegistroAuditoria (fechaHora, detalle, idTipoRegistroAuditoria, idEmpleado)
+VALUES (now(), new.detalle, new.idTipoRegistroAuditoria, new.idEmpleado)
 END
 GO
 
