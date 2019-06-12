@@ -213,8 +213,41 @@ END
 
 --Trigger #8: monitorea la tabla producto y cuando la cantidad disponible del producto es inferior a la cantidad minimaa permita, se envía un correo al departamento
 
+CREATE TRIGGER cantidadMinimaPermitida
+ON nombreBase.inventario 
+AFTER UPDATE 
+DECLARE @nombreProducto varchar(30),
+DECLARE @cantidadDisponible int,
+DECLARE @idProducto int,
+DECLARE @cantidadMinimaProducto int,
+SELECT @cantidadMinimaProducto = nombreBase.inventario.cantidadMinimaPermitida, @cantidadDisponible = 
+nombreBase.inventario.cantidadDisponible, @nombreProducto = nombreBase.producto.nombre FROM nombreBase.inventario 
+WHERE nombreBase.inventario.idProducto = new.idProducto
+AS
+BEGIN
+  IF (@cantidadDisponible < cantidadMinimaProducto)
+  BEGIN
+  DECLARE @correoDepartamental varchar(30)
+  DECLARE @abreviaturaDepartamento varchar(30)
+  SELECT @correoDepartamental = nombreBase.departamento.cuentaCorreoDepartamental, @abreviaturaDepartamento = abreviaturaDepartamento FROM nombreBase.departamento
+  WHERE @abreviaturaDepartamento = 'compras'
+     EXEC msdb.dbo.sp_send_dbmail  
+          @profile_name = 'Tienda TEC Administración',  
+          @recipients = nombreBase.departamento.cuentaCorreoDepartamental,  
+          @body = 'LA CANTIDAD DISPONIBLE DEL PRODUCTO ' + @nombreProducto + ' SE ENCUENTRA DEBAJO DE LA MINIMA',
+          @subject = 'NOTIFICACION';
+  END
+END
+GO
 
+--Views #11: vista que contenga información no sensible de los clientes y las órdenes de compra correspondientes, donde se hayan aplicado códigos de descuento (mostrar tanto el monto original como el monto con descuento)
 
+CREATE VIEW informaciónClienteCompras 
+AS   
+SELECT nombreBase.cliente.cedulaCliente,nombreBase.cliente.email, nombreBase.cliente.tipoCliente,nombreBase.cliente.categoria,nombreBase.ordenCompra.idOrden,nombreBase.ordenCompra.idCuponDescuento
+FROM nombreBase.cliente AS clienteC1 
+INNER JOIN nombreBase.ordenCompra AS clienteC2 ON clienteC1.cedulaCliente = clienteC2.cedulaCliente;
+GO 
 
 
 
