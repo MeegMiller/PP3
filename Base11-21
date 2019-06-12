@@ -108,8 +108,10 @@ create table tiendaTEC.cuponDescuento(
 
 create table tiendaTEC.ordenCompraCancelada(
   idOrden int PRIMARY KEY,
+  cedulaCliente int NOT NULL,
   fechaCancelacion date NOT NULL,
   explicacionCliente varchar(40) NOT NULL,
+  cedulaCliente FOREIGN KEY REFERENCES cliente(cedulaCliente),
 );
 
 create table tiendaTEC.ordenCancelada(
