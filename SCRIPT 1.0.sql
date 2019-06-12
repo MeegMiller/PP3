@@ -19,14 +19,14 @@ email varchar(30) NOT NULL,
 idDepartamento int NOT NULL,
 fechaContratacion date NOT NULL,
 
---Declaraci髇 de atributos unicos
+--Declaraci贸n de atributos unicos
 CONSTRAINT cedulaEmpleado UNIQUE(cedula),
 CONSTRAINT emailEmpleado UNIQUE(email),
 
---Declaraci髇 PK
+--Declaraci贸n PK
 PRIMARY KEY (idEmpleado),
 
---Declaraci髇 FK
+--Declaraci贸n FK
 FOREIGN KEY (idGenero) REFERENCES tiendaTEC.genero(idGenero),
 FOREIGN KEY (idDepartamento) REFERENCES tiendaTEC.departamento(idDepartamento)
 );
@@ -36,7 +36,7 @@ create table tiendaTEC.genero(
 idGenero int IDENTITY(1,1),
 detalle varchar(30) NOT NULL,
 
---Declaraci髇 PK
+--Declaraci贸n PK
 PRIMARY KEY (idGenero)
 );
 
@@ -47,10 +47,10 @@ abreviaturaDepartamento varchar(30) NOT NULL,
 cuentaCorreoDepartamental varchar(30) NOT NULL,
 detalle varchar(30) NOT NULL,
 
---Declaraci髇 de atributos unicos
+--Declaraci贸n de atributos unicos
 CONSTRAINT emailDepartamental UNIQUE(cuentaCorreoDepartamental),
 
---Declaraci髇 PK
+--Declaraci贸n PK
 PRIMARY KEY (idDepartamento)
 );
 
@@ -64,13 +64,13 @@ primerNombre varchar(30) NOT NULL,
 primerApellido varchar(30) NOT NULL,
 telefono int NOT NULL,
 
---Declaraci髇 de atributos unicos
+--Declaraci贸n de atributos unicos
 CONSTRAINT telefonoContactoEmergencia UNIQUE(telefono),
 
---Declaraci髇 PK
+--Declaraci贸n PK
 PRIMARY KEY (idContantoEmergencia),
 
---Declaraci髇 FK
+--Declaraci贸n FK
 FOREIGN KEY (idEmpleado) REFERENCES tiendaTEC.empleado(idEmpleado),
 FOREIGN KEY (idGenero) REFERENCES tiendaTEC.genero(idGenero),
 FOREIGN KEY (idParentesco) REFERENCES tiendaTEC.parentesco(idParentesco)
@@ -81,7 +81,7 @@ create table tiendaTEC.parentesco(
 idParentesco int IDENTITY(1,1),
 detalle varchar(30) NOT NULL,
 
---Declaraci髇 PK
+--Declaraci贸n PK
 PRIMARY KEY (idParentesco)
 );
 
@@ -91,7 +91,7 @@ idPais int IDENTITY(1,1),
 abreviaturaPais varchar(30) NOT NULL,
 detalle varchar(30) NOT NULL,
 
---Declaraci髇 PK
+--Declaraci贸n PK
 PRIMARY KEY (idPais)
 );
 
@@ -101,10 +101,10 @@ idProvinciaEstado int IDENTITY(1,1),
 idPais int NOT NULL,
 nombre varchar(30) NOT NULL,
 
---Declaraci髇 PK
+--Declaraci贸n PK
 PRIMARY KEY (idProvinciaEstado),
 
---Declaraci髇 FK
+--Declaraci贸n FK
 FOREIGN KEY (idPais) REFERENCES tiendaTEC.pais(idPais)
 );
 
@@ -118,17 +118,17 @@ categoria varchar(30) NOT NULL,
 senas varchar(30) NOT NULL,
 email varchar(30) NOT NULL,
 
---Declaraci髇 de atributos unicos
+--Declaraci贸n de atributos unicos
 CONSTRAINT cedulaUnicaCliente UNIQUE(cedulaCliente),
 CONSTRAINT emailCliente UNIQUE(email),
 
 --Declaracion de restricciones check
 CONSTRAINT CHK_categoriaCliente CHECK (categoria ='A' OR categoria ='B' OR categoria ='C' OR categoria ='D'),
 
---Declaraci髇 PK
+--Declaraci贸n PK
 PRIMARY KEY (cedulaCliente),
 
---Declaraci髇 FK
+--Declaraci贸n FK
 FOREIGN KEY (idPais) REFERENCES tiendaTEC.pais(idPais),
 FOREIGN KEY (idProvinciaEstado) REFERENCES tiendaTEC.provinciaEstado(idProvinciaEstado)
 );
@@ -142,13 +142,13 @@ segundoNombre varchar(30) NOT NULL,
 primerApellido varchar(30) NOT NULL,
 segundoApellido varchar(30) NOT NULL,
 
---Declaraci髇 de atributos unicos
+--Declaraci贸n de atributos unicos
 CONSTRAINT cedulaUnicaClienteFisico UNIQUE(cedulaCliente),
 
---Declaraci髇 PK
+--Declaraci贸n PK
 PRIMARY KEY (cedulaCliente),
 
---Declaraci髇 FK
+--Declaraci贸n FK
 FOREIGN KEY (idGenero) REFERENCES tiendaTEC.genero(idGenero),
 FOREIGN KEY (cedulaCliente) REFERENCES tiendaTEC.cliente(cedulaCliente)
 );
@@ -158,10 +158,10 @@ create table tiendaTEC.clienteJuridico(
 cedulaCliente int NOT NULL,
 razonSocial varchar(30) NOT NULL,
 
---Declaraci髇 de atributos unicos
+--Declaraci贸n de atributos unicos
 CONSTRAINT cedulaUnicaClienteJuridico UNIQUE(cedulaCliente),
 
---Declaraci髇 PK
+--Declaraci贸n PK
 PRIMARY KEY (cedulaCliente),
 
 --Declaracion FK
@@ -225,7 +225,7 @@ UPDATE montoDescuento;
 create table tiendaTEC.ordenDeCompraEstado(
   idEstado int IDENTITY(1,1) PRIMARY KEY,
   detalle varchar(30) NOT NULL,
-  CONSTRAINT compraEstado_CHK CHECK (detalle='En preparaci髇' OR detalle='en tr醤sito' OR detalle='cancelada' OR detalle='entregada' OR detalle='con retraso' OR detalle='extraviado')
+  CONSTRAINT compraEstado_CHK CHECK (detalle='En preparaci贸n' OR detalle='en tr谩nsito' OR detalle='cancelada' OR detalle='entregada' OR detalle='con retraso' OR detalle='extraviado')
 );
 
 create table tiendaTEC.item(
@@ -275,7 +275,7 @@ create table tiendaTEC.ordenCancelada(
   fechaCancelacion date NULL,
 );
 
-/*Funci髇 #1 */
+/*Funci贸n #1 */
 CREATE FUNCTION productoMasVendido(@fecha1 varchar(50),@fecha2 varchar(50))
 RETURNS table
 AS
@@ -290,7 +290,7 @@ RETURN(
 END
 GO
 
-/*Funci髇 #2 */
+/*Funci贸n #2 */
 CREATE FUNCTION descuentoAplicado(@cuponDescuento int)
 RETURNS int
 AS
@@ -338,3 +338,131 @@ CREATE VIEW productosNoVendidos AS
 SELECT nombre
 FROM tiendaTEC.producto a, tiendaTEC.item b
 WHERE a.idProducto <> b.idProducto;
+
+--Requerimientos
+
+--Funcionalidad #3: funcion que recibe un numero de cliente y un mes/a帽o y determina el monto promedio de compras del mes/a帽o indicado
+
+create function promedioDeCompras(@cedulaCliente int, @fecha1 date, @fecha2 date)
+returns int
+as
+begin
+return ( SELECT AVG(montoTotal)
+FROM tiendaTEC.ordenCompra
+where tiendaTEC.ordenCompra.cedulaCliente = @cedulaCliente AND tiendaTEC.ordenCompra.fecha BETWEEN @fecha1 and @fecha2)
+end
+go
+
+--Procedimiento Almacenado #4: cuando se ingrese un nuevo cupon de descuento, notifique mediante un correo electr贸nico a todos los clientes para los cuales est谩 disponible el cup贸n
+
+CREATE PROCEDURE notificacionCuponNuevo
+  @nuevoCupon int,
+  @disponibilidadCupon varchar(30),
+  @myRecipientList varchar(max),
+AS
+  SET @myRecipientList = STUFF((SELECT ';' + email 
+    FROM tiendaTEC.cliente 
+    WHERE @disponibilidadCupon = categoria FOR XML PATH('')),1,1,''),
+  EXEC msdb.dbo.sp_send_dbmail  
+    @profile_name = 'Tienda TEC', --emisor del correo
+    @recipients = @myRecipientList, --lista de correos seleccionado
+    @query = 'SELECT idCuponDescuento
+              FROM tiendaTEC.cuponDescuento 
+              WHERE @nuevoCupon = idCuponDescuento, 
+    @body = 'HAY DISPONIBLE UN NUEVO CUPON DE DESCUENTO QUE PUEDE APLICAR', --mensaje del correo
+    @subject = 'NOTIFICACION DE CUPONES DE DESCUENTO',  --asunto del correo
+    @attach_query_result_as_file = 0 ; --es cero porque lo que se quiere enviar en el mensaje y no la consulta
+GO;
+
+--Procedimiento #7: se recibe un nuevo producto y genera el registro en el inventario
+
+CREATE PROCEDURE registroInventario
+  @idProducto int,
+  @cantidadDisponible int,
+
+AS
+BEGIN
+  UPDATE tiendaTEC.inventario SET tiendaTEC.cantidadDisponible = cantidadDisponible + @cantidadDisponible
+  FROM tiendaTEC.producto
+  WHERE @idProducto = idProducto
+END
+
+--Trigger #8: monitorea la tabla producto y cuando la cantidad disponible del producto es inferior a la cantidad minimaa permita, se env铆a un correo al departamento
+
+CREATE TRIGGER cantidadMinimaPermitida
+ON nombreBase.inventario 
+AFTER UPDATE 
+DECLARE @nombreProducto varchar(30),
+DECLARE @cantidadDisponible int,
+DECLARE @idProducto int,
+DECLARE @cantidadMinimaProducto int,
+SELECT @cantidadMinimaProducto = tiendaTEC.inventario.cantidadMinimaPermitida, @cantidadDisponible = 
+tiendaTEC.inventario.cantidadDisponible, @nombreProducto = tiendaTEC.producto.nombre FROM tiendaTEC.inventario 
+WHERE tiendaTEC.inventario.idProducto = new.idProducto
+AS
+BEGIN
+  IF (@cantidadDisponible < cantidadMinimaProducto)
+  BEGIN
+  DECLARE @correoDepartamental varchar(30)
+  DECLARE @abreviaturaDepartamento varchar(30)
+  SELECT @correoDepartamental = tiendaTEC.departamento.cuentaCorreoDepartamental, @abreviaturaDepartamento = tiendaTEC.abreviaturaDepartamento FROM tiendaTEC.departamento
+  WHERE @abreviaturaDepartamento = 'compras'
+     EXEC msdb.dbo.sp_send_dbmail  
+          @profile_name = 'Tienda TEC Administraci贸n',  
+          @recipients = tiendaTEC.departamento.cuentaCorreoDepartamental,  
+          @body = 'LA CANTIDAD DISPONIBLE DEL PRODUCTO ' + @nombreProducto + ' SE ENCUENTRA DEBAJO DE LA MINIMA',
+          @subject = 'NOTIFICACION';
+  END
+END
+GO
+
+--Views #11: vista que contenga informaci贸n no sensible de los clientes y las 贸rdenes de compra correspondientes, donde se hayan aplicado c贸digos de descuento (mostrar tanto el monto original como el monto con descuento)
+
+CREATE VIEW informaci贸nClienteCompras 
+AS   
+SELECT tiendaTEC.cliente.idPais, tiendaTEC.cliente.idProvinciaEstado, tiendaTEC.cliente.tipoCliente,tiendaTEC.cliente.categoria,tiendaTEC.cliente.senas,tiendaTEC.ordenCompra.fecha,tiendaTEC.ordenCompra.montoDescuento,tiendaTEC.ordenCompra.montoTotal,tiendaTEC.ordenCompra.fechaAplicacionDescuento,tiendaTEC.ordenCompra.idEstado
+FROM tiendaTEC.cliente, tiendaTEC.ordenCompra
+WHERE tiendaTEC.ordenCompra.idCuponDescuento IS NULL
+GO 
+
+--Views #12: vista que contenga la informaci贸n de las ordenes de compras canceladas en el mes actual as铆 como la raz贸n de cancelaci贸n 
+--indicada por el cliente, deben ser agrupadas seg煤n el cliente
+
+CREATE VIEW ordenesCanceladas
+AS
+SELECT tiendaTEC.ordenCompraCancelada.idOrden,tiendaTEC.ordenCompraCancelada.fechaCancelacion,tiendaTEC.ordenCompraCancelada.cedulaCliente
+FROM tiendaTEC.ordenCompraCancelada
+WHERE MONTH(tiendaTEC.ordenCompraCancelada.fechaCancelacion) = MONTH(getdate())
+GROUP BY tiendaTEC.ordenCompraCancelada.cedulaCliente
+GO
+
+--Indice #14: crear todos los indices necesarios para acelerar los procesos de busqueda
+--en las tablas, especialmente en tablas que tendr谩n un crecimiento r谩pido como lo son:
+--cliente, producto, item, ordenDeCompra, entre otros
+
+CREATE NONCLUSTERED INDEX IDX_cliente
+ON tiendaTEC.cliente (categoria, tipoCliente);
+
+CREATE NONCLUSTERED INDEX IDX_producto
+ON tiendaTEC.producto (precioUnitario,estaDescontinuado);
+
+CREATE NONCLUSTERED INDEX IDX_item
+ON tiendaTEC.item (monto,cantidad,idOrden,idProducto);
+
+CREATE INDEX IDX_ordenCompra
+ON tiendaTEC.ordenCompra (fecha,idOrden,montoTotal,idEstado,montoDescuento,idCuponDescuento,fechaAplicacionDescuento);
+
+CREATE NONCLUSTERED INDEX IDX_ordenCompraCancelada
+ON tiendaTEC.ordenCompraCancelada (fechaCancelacion,explicacionCliente,cedulaCliente)
+
+CREATE NONCLUSTERED INDEX IDX_clienteFisico
+ON tiendaTEC.clienteFisico (primerNombre,segundoNombre, primerApellido, segundoApellido, idGenero)
+
+CREATE NONCLUSTERED INDEX IDX_clienteJuridico
+ON tiendaTEC.clienteFisico (razonSocial)
+
+CREATE NONCLUSTERED INDEX IDX_inventario
+ON tiendaTEC.inventario (cantidadDisponible,fechaIngreso,cantidadMinimaPermitida)
+
+CREATE NONCLUSTERED INDEX IDX_bitacoraRegistroAuditoria
+ON tiendaTEC.bitacoraRegistroAuditoria (idTipoRegistroAuditoria,fechaHora,idEmpleado,detalle)
