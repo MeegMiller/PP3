@@ -1,9 +1,9 @@
-create database ;
-use ;
+create database PP3;
+use PP3;
 
-create schema ;  
+create schema tiendaTEC;  
 
-create table .proveedores(
+create table tiendaTEC.proveedores(
   idProveedor int IDENTITY(1,1) PRIMARY KEY,
   telefono int NOT NULL UNIQUE,
   nombreCompania varchar(25) NOT NULL,
@@ -12,7 +12,7 @@ create table .proveedores(
   CONSTRAINT activo_CHK CHECK (estaActivo='A' OR estaActivo='I')
 );
 
-create table .vendedor(
+create table tiendaTEC.vendedor(
   idVendedor int IDENTITY(1,1) PRIMARY KEY,
   nombre varchar(25) NOT NULL,
   puesto varchar(25) NOT NULL,
@@ -26,13 +26,13 @@ create table .vendedor(
   idProveedor FOREIGN KEY REFERENCES proveedores(idProveedor),
 );
 
-create table .inventario(
+create table tiendaTEC.inventario(
   idProducto int PRIMARY KEY,
   cantidadMinimaPermitida int NOT NULL,
   fechaIngreso date NOT NULL,
 );
 
-create table .producto(
+create table tiendaTEC.producto(
   idProducto int IDENTITY(1,1) PRIMARY KEY,
   nombre varchar(30) NOT NULL PRIMARY KEY,
   precioUnitario money NOT NULL,
@@ -42,7 +42,7 @@ create table .producto(
   idProveedor FOREIGN KEY REFERENCES proveedores(idProveedor),
 );
 
-create table tiendatEC.ordenCompra(
+create table tiendaTEC.ordenCompra(
   idOrden int IDENTITY(1,1) PRIMARY KEY,
   cedulaCliente int NOT NULL,
   fecha date NOT NULL,
@@ -62,13 +62,13 @@ SELECT porcentajeDescuento FROM tiendaTEC.cuponDescuento
 UPDATE montoDescuento
 
 
-create table .ordenDeCompraEstado(
+create table tiendaTEC.ordenDeCompraEstado(
   idEstado int IDENTITY(1,1) PRIMARY KEY,
   detalle varchar(30) NOT NULL,
   CONSTRAINT compraEstado_CHK CHECK (detalle='En preparación' OR detalle='en tránsito' OR detalle='cancelada' OR detalle='entregada' OR detalle='con retraso' OR detalle='extraviado')
 );
 
-create table .item(
+create table tiendaTEC.item(
   idItem int IDENTITY(1,1) PRIMARY KEY,
   monto money NOT NULL,
   idOrden int NOT NULL,
@@ -77,7 +77,7 @@ create table .item(
   idProducto FOREIGN KEY REFERENCES proveedor(idProducto),
 );
 
-create table .bitacoraRegistroAuditoria(
+create table tiendaTEC.bitacoraRegistroAuditoria(
   idRegistroAuditoria int IDENTITY(1,1) PRIMARY KEY,
   fechaHora datetime NOT NULL,
   detalle varchar(40) NOT NULL,
@@ -87,13 +87,13 @@ create table .bitacoraRegistroAuditoria(
   idEmpleado FOREIGN KEY REFERENCES cliente(cedulaCliente),
 );
 
-create table .tipoRegistroAuditoria(
+create table tiendaTEC.tipoRegistroAuditoria(
   idTipoRegistroAuditoria int IDENTITY(1,1) PRIMARY KEY,
   detalle varchar(30) NOT NULL PRIMARY KEY,
   CONSTRAINT detalleRegistro_CHK CHECK (detalle='cuponCreado' OR detalle='cuponAplicado' OR detalle='ordenCreada' OR detalle='cantidadMinimaSuperada' OR detalle='proveedorCreado' OR detalle='proveedorDadoDeBaja' )
 );
 
-create table .cuponDescuento(
+create table tiendaTEC.cuponDescuento(
   idCuponDescuento int IDENTITY(1,1) PRIMARY KEY,
   detalleCodigo varchar(40) NOT NULL,
   porcentajeDescuento int NOT NULL,
@@ -106,13 +106,13 @@ create table .cuponDescuento(
   CONSTRAINT disponibilidad_CHK CHECK (disponibilidadTipo='A' OR disponibilidadTipo='B' OR disponibilidadTipo='C' OR disponibilidadTipo='D'),
 );
 
-create table .ordenCompraCancelada(
+create table tiendaTEC.ordenCompraCancelada(
   idOrden int PRIMARY KEY,
   fechaCancelacion date NOT NULL,
   explicacionCliente varchar(40) NOT NULL,
 );
 
-create table .ordenCancelada(
+create table tiendaTEC.ordenCancelada(
   idOrdenCancelada int IDENTITY(1,1) PRIMARY KEY,
   idOrden int NULL,
   fechaCancelacion date NULL,
@@ -125,9 +125,9 @@ create function productoMasVendido(@fecha1 varchar(50),@fecha2 varchar(50))
 returns table
 as
 return(
-    select top 1 item.idProducto,count(item.idProducto) as cantidad
+    select top 1 tiendaTEC.item.idProducto,count(item.idProducto) as cantidad
     from ordenCompra join item 
-    on ordenCompra.idOrden=item.idOrden
+    on tiendaTEC.ordenCompra.idOrden=item.idOrden
     where ordenCompra.fecha BETWEEN @fecha1 and @fecha2
     group by item.idProducto
     order by cantidad desc 
@@ -155,20 +155,20 @@ go
 
 /*Trigger #9*/
 CREATE TRIGGER auditoriaOrdenes
-AFTER INSERT ON .ordenCompraCancelada
+AFTER INSERT ON tiendaTEC.ordenCompraCancelada
 AS BEGIN
 FOR EACH ROW
-INSERT INSERT INTO ordenCancelada (idOrden, fechaCancelacion)
+INSERT INSERT INTO tiendaTEC.ordenCancelada (idOrden, fechaCancelacion)
 VALUES (new.idOrden, new.fechaCancelacion)
 END
 GO
 
 /*Trigger #10*/
 CREATE TRIGGER auditoriaProveedores
-AFTER UPDATE ON .proveedores
+AFTER UPDATE, INSERT ON tiendaTEC.proveedores
 AS BEGIN
 FOR EACH ROW
-INSERT INSERT INTO bitacoraRegistroAuditoria (fechaHora, detalle, idTipoRegistroAuditoria, idEmpleado)
+INSERT INSERT INTO tiendaTEC.bitacoraRegistroAuditoria (fechaHora, detalle, idTipoRegistroAuditoria, idEmpleado)
 VALUES (getdatetime(), new.detalle, new.idTipoRegistroAuditoria, new.idEmpleado)
 END
 GO
@@ -176,5 +176,5 @@ GO
 /*Vista #13 */
 CREATE VIEW productosNoVendidos AS
 SELECT nombre
-FROM producto a, item b
+FROM tiendaTEC.producto a, tiendaTEC.item b
 WHERE a.idProducto <> b.idProducto;
