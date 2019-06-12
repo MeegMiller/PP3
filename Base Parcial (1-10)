@@ -22,8 +22,8 @@ CONSTRAINT emailEmpleado UNIQUE(email),
 PRIMARY KEY (idEmpleado),
 
 --Declaración FK
-FOREIGN KEY (idGenero) REFERENCES genero(idGenero),
-FOREIGN KEY (idDepartamento) REFERENCES departamento(idDepartamento)
+FOREIGN KEY (idGenero) tiendaTEC.REFERENCES genero(idGenero),
+FOREIGN KEY (idDepartamento) REFERENCES tiendaTEC.departamento(idDepartamento)
 );
 
 -----------------------------------2
@@ -66,9 +66,9 @@ CONSTRAINT telefonoContactoEmergencia UNIQUE(telefono),
 PRIMARY KEY (idContantoEmergencia),
 
 --Declaración FK
-FOREIGN KEY (idEmpleado) REFERENCES empleado(idEmpleado),
-FOREIGN KEY (idGenero) REFERENCES genero(idGenero),
-FOREIGN KEY (idParentesco) REFERENCES parentesco(idParentesco)
+FOREIGN KEY (idEmpleado) REFERENCES tiendaTEC.empleado(idEmpleado),
+FOREIGN KEY (idGenero) REFERENCES tiendaTEC.genero(idGenero),
+FOREIGN KEY (idParentesco) REFERENCES tiendaTEC.parentesco(idParentesco)
 );
 
 -----------------------------------5
@@ -100,7 +100,7 @@ nombre varchar(30) NOT NULL,
 PRIMARY KEY (idProvinciaEstado),
 
 --Declaración FK
-FOREIGN KEY (idPais) REFERENCES pais(idPais)
+FOREIGN KEY (idPais) REFERENCES tiendaTEC.pais(idPais)
 );
 
 -----------------------------------8
@@ -124,8 +124,8 @@ CONSTRAINT CHK_categoriaCliente CHECK (categoria ='A' OR categoria ='B' OR categ
 PRIMARY KEY (cedulaCliente),
 
 --Declaración FK
-FOREIGN KEY (idPais) REFERENCES pais(idPais),
-FOREIGN KEY (idProvinciaEstado) REFERENCES provinciaEstado(idProvinciaEstado)
+FOREIGN KEY (idPais) REFERENCES tiendaTEC.pais(idPais),
+FOREIGN KEY (idProvinciaEstado) REFERENCES tiendaTEC.provinciaEstado(idProvinciaEstado)
 );
 
 -----------------------------------9
@@ -138,29 +138,29 @@ primerApellido varchar(30) NOT NULL,
 segundoApellido varchar(30) NOT NULL,
 
 --Declaración de atributos unicos
-CONSTRAINT cedulaUnicaCliente UNIQUE(cedulaCliente),
+CONSTRAINT cedulaUnicaClienteFisico UNIQUE(cedulaCliente),
 
 --Declaración PK
 PRIMARY KEY (cedulaCliente),
 
 --Declaración FK
-FOREIGN KEY (idGenero) REFERENCES genero(idGenero),
-FOREIGN KEY (cedulaCliente) REFERENCES cliente(cedulaCliente)
+FOREIGN KEY (idGenero) REFERENCES tiendaTEC.genero(idGenero),
+FOREIGN KEY (cedulaCliente) REFERENCES tiendaTEC.cliente(cedulaCliente)
 );
 
 -----------------------------------10
 create table tiendaTEC.clienteJuridico(
-cedualCliente int NOT NULL,
+cedulaCliente int NOT NULL,
 razonSocial varchar(30) NOT NULL,
 
 --Declaración de atributos unicos
-CONSTRAINT cedulaUnicaCliente UNIQUE(cedulaCliente),
+CONSTRAINT cedulaUnicaClienteJuridico UNIQUE(cedulaCliente),
 
 --Declaración PK
 PRIMARY KEY (cedulaCliente),
 
 --Declaracion FK
-FOREIGN KEY (cedulaCliente) REFERENCES cliente(cedulaCliente)
+FOREIGN KEY (cedulaCliente) REFERENCES tiendaTEC.cliente(cedulaCliente)
 );
 
 --Requerimientos
@@ -172,8 +172,8 @@ returns int
 as
 begin
 return ( SELECT AVG(montoTotal)
-FROM nombreBase.ordenCompra
-where nombreBase.ordenCompra.cedulaCliente = @cedulaCliente AND nombreBase.ordenCompra.fecha BETWEEN @fecha1 and @fecha2)
+FROM tiendaTEC.ordenCompra
+where tiendaTEC.ordenCompra.cedulaCliente = @cedulaCliente AND tiendaTEC.ordenCompra.fecha BETWEEN @fecha1 and @fecha2)
 end
 go
 
@@ -185,13 +185,13 @@ CREATE PROCEDURE notificacionCuponNuevo
   @myRecipientList varchar(max),
 AS
   SET @myRecipientList = STUFF((SELECT ';' + email 
-    FROM nombreBase.cliente 
+    FROM tiendaTEC.cliente 
     WHERE @disponibilidadCupon = categoria FOR XML PATH('')),1,1,''),
   EXEC msdb.dbo.sp_send_dbmail  
     @profile_name = 'Tienda TEC', --emisor del correo
     @recipients = @myRecipientList, --lista de correos seleccionado
     @query = 'SELECT idCuponDescuento
-              FROM nombreBase.cuponDescuento 
+              FROM tiendaTEC.cuponDescuento 
               WHERE @nuevoCupon = idCuponDescuento, 
     @body = 'HAY DISPONIBLE UN NUEVO CUPON DE DESCUENTO QUE PUEDE APLICAR', --mensaje del correo
     @subject = 'NOTIFICACION DE CUPONES DE DESCUENTO',  --asunto del correo
@@ -206,8 +206,8 @@ CREATE PROCEDURE registroInventario
 
 AS
 BEGIN
-  UPDATE inventario SET cantidadDisponible = cantidadDisponible + @cantidadDisponible
-  FROM nombreBase.producto
+  UPDATE tiendaTEC.inventario SET tiendaTEC.cantidadDisponible = cantidadDisponible + @cantidadDisponible
+  FROM tiendaTEC.producto
   WHERE @idProducto = idProducto
 END
 
@@ -220,20 +220,20 @@ DECLARE @nombreProducto varchar(30),
 DECLARE @cantidadDisponible int,
 DECLARE @idProducto int,
 DECLARE @cantidadMinimaProducto int,
-SELECT @cantidadMinimaProducto = nombreBase.inventario.cantidadMinimaPermitida, @cantidadDisponible = 
-nombreBase.inventario.cantidadDisponible, @nombreProducto = nombreBase.producto.nombre FROM nombreBase.inventario 
-WHERE nombreBase.inventario.idProducto = new.idProducto
+SELECT @cantidadMinimaProducto = tiendaTEC.inventario.cantidadMinimaPermitida, @cantidadDisponible = 
+tiendaTEC.inventario.cantidadDisponible, @nombreProducto = tiendaTEC.producto.nombre FROM tiendaTEC.inventario 
+WHERE tiendaTEC.inventario.idProducto = new.idProducto
 AS
 BEGIN
   IF (@cantidadDisponible < cantidadMinimaProducto)
   BEGIN
   DECLARE @correoDepartamental varchar(30)
   DECLARE @abreviaturaDepartamento varchar(30)
-  SELECT @correoDepartamental = nombreBase.departamento.cuentaCorreoDepartamental, @abreviaturaDepartamento = abreviaturaDepartamento FROM nombreBase.departamento
+  SELECT @correoDepartamental = tiendaTEC.departamento.cuentaCorreoDepartamental, @abreviaturaDepartamento = tiendaTEC.abreviaturaDepartamento FROM tiendaTEC.departamento
   WHERE @abreviaturaDepartamento = 'compras'
      EXEC msdb.dbo.sp_send_dbmail  
           @profile_name = 'Tienda TEC Administración',  
-          @recipients = nombreBase.departamento.cuentaCorreoDepartamental,  
+          @recipients = tiendaTEC.departamento.cuentaCorreoDepartamental,  
           @body = 'LA CANTIDAD DISPONIBLE DEL PRODUCTO ' + @nombreProducto + ' SE ENCUENTRA DEBAJO DE LA MINIMA',
           @subject = 'NOTIFICACION';
   END
@@ -244,9 +244,9 @@ GO
 
 CREATE VIEW informaciónClienteCompras 
 AS   
-SELECT nombreBase.cliente.idPais,nombreBase.cliente.idProvinciaEstado, nombreBase.cliente.tipoCliente,nombreBase.cliente.categoria,nombreBase.cliente.senas,nombreBase.ordenCompra.fecha,nombreBase.ordenCompra.montoDescuento,nombreBase.ordenCompra.montoTotal,nombreBase.ordenCompra.fechaAplicacionDescuento,nombreBase.ordenCompra.idEstado
-FROM nombreBase.cliente, nombreBase.ordenCompra
-WHERE nombreBase.ordenCompra.idCuponDescuento IS NULL
+SELECT tiendaTEC.cliente.idPais, tiendaTEC.cliente.idProvinciaEstado, tiendaTEC.cliente.tipoCliente,tiendaTEC.cliente.categoria,tiendaTEC.cliente.senas,tiendaTEC.ordenCompra.fecha,tiendaTEC.ordenCompra.montoDescuento,tiendaTEC.ordenCompra.montoTotal,tiendaTEC.ordenCompra.fechaAplicacionDescuento,tiendaTEC.ordenCompra.idEstado
+FROM tiendaTEC.cliente, tiendaTEC.ordenCompra
+WHERE tiendaTEC.ordenCompra.idCuponDescuento IS NULL
 GO 
 
 --Views #12: vista que contenga la información de las ordenes de compras canceladas en el mes actual así como la razón de cancelación 
@@ -254,10 +254,10 @@ GO
 
 CREATE VIEW ordenesCanceladas
 AS
-SELECT nombreBase.ordenCompraCancelada.idOrden,nombreBase.ordenCompraCancelada.fechaCancelacion,nombreBase.ordenCompraCancelada.cedulaCliente
-FROM nombreBase.ordenCompraCancelada
-WHERE MONTH(nombreBase.ordenCompraCancelada.fechaCancelacion) = MONTH(getdate())
-GROUP BY nombreBase.ordenCompraCancelada.cedulaCliente
+SELECT tiendaTEC.ordenCompraCancelada.idOrden,tiendaTEC.ordenCompraCancelada.fechaCancelacion,tiendaTEC.ordenCompraCancelada.cedulaCliente
+FROM tiendaTEC.ordenCompraCancelada
+WHERE MONTH(tiendaTEC.ordenCompraCancelada.fechaCancelacion) = MONTH(getdate())
+GROUP BY tiendaTEC.ordenCompraCancelada.cedulaCliente
 GO
 
 --Indice #14: crear todos los indices necesarios para acelerar los procesos de busqueda
@@ -265,31 +265,31 @@ GO
 --cliente, producto, item, ordenDeCompra, entre otros
 
 CREATE NONCLUSTERED INDEX IDX_cliente
-ON nombreBase.cliente (categoria, tipoCliente);
+ON tiendaTEC.cliente (categoria, tipoCliente);
 
 CREATE NONCLUSTERED INDEX IDX_producto
-ON nombreBase.producto (precioUnitario,estaDescontinuado);
+ON tiendaTEC.producto (precioUnitario,estaDescontinuado);
 
 CREATE NONCLUSTERED INDEX IDX_item
-ON nombreBase.item (monto,cantidad,idOrden,idProducto);
+ON tiendaTEC.item (monto,cantidad,idOrden,idProducto);
 
 CREATE INDEX IDX_ordenCompra
-ON nombreBase.ordenCompra (fecha,idOrden,montoTotal,idEstado,montoDescuento,idCuponDescuento,fechaAplicacionDescuento);
+ON tiendaTEC.ordenCompra (fecha,idOrden,montoTotal,idEstado,montoDescuento,idCuponDescuento,fechaAplicacionDescuento);
 
 CREATE NONCLUSTERED INDEX IDX_ordenCompraCancelada
-ON nombreBase.ordenCompraCancelada (fechaCancelacion,explicacionCliente,cedulaCliente)
+ON tiendaTEC.ordenCompraCancelada (fechaCancelacion,explicacionCliente,cedulaCliente)
 
 CREATE NONCLUSTERED INDEX IDX_clienteFisico
-ON nombreBase.clienteFisico (primerNombre,segundoNombre, primerApellido, segundoApellido, idGenero)
+ON tiendaTEC.clienteFisico (primerNombre,segundoNombre, primerApellido, segundoApellido, idGenero)
 
 CREATE NONCLUSTERED INDEX IDX_clienteJuridico
-ON nombreBase.clienteFisico (razonSocial)
+ON tiendaTEC.clienteFisico (razonSocial)
 
 CREATE NONCLUSTERED INDEX IDX_inventario
-ON nombreBase.inventario (cantidadDisponible,fechaIngreso,cantidadMinimaPermitida)
+ON tiendaTEC.inventario (cantidadDisponible,fechaIngreso,cantidadMinimaPermitida)
 
 CREATE NONCLUSTERED INDEX IDX_bitacoraRegistroAuditoria
-ON nombreBase.itacoraRegistroAuditoria (idTipoRegistroAuditoria,fechaHora,idEmpleado,detalle)
+ON tiendaTEC.bitacoraRegistroAuditoria (idTipoRegistroAuditoria,fechaHora,idEmpleado,detalle)
 
 
     
