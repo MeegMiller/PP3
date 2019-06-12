@@ -244,9 +244,8 @@ GO
 
 CREATE VIEW informaciónClienteCompras 
 AS   
-SELECT nombreBase.cliente.cedulaCliente,nombreBase.cliente.email, nombreBase.cliente.tipoCliente,nombreBase.cliente.categoria,nombreBase.ordenCompra.idOrden,nombreBase.ordenCompra.idCuponDescuento
-FROM nombreBase.cliente AS clienteC1 
-INNER JOIN nombreBase.ordenCompra AS clienteC2 ON clienteC1.cedulaCliente = clienteC2.cedulaCliente;
+SELECT nombreBase.cliente.idPais,nombreBase.cliente.idProvinciaEstado, nombreBase.cliente.tipoCliente,nombreBase.cliente.categoria,nombreBase.cliente.senas,nombreBase.ordenCompra.fecha,nombreBase.ordenCompra.montoDescuento,nombreBase.ordenCompra.montoTotal,nombreBase.ordenCompra.fechaAplicacionDescuento,nombreBase.ordenCompra.idEstado
+FROM nombreBase.cliente, nombreBase.ordenCompra
 WHERE nombreBase.ordenCompra.idCuponDescuento <> NULL
 GO 
 
@@ -265,6 +264,32 @@ GO
 --en las tablas, especialmente en tablas que tendrán un crecimiento rápido como lo son:
 --cliente, producto, item, ordenDeCompra, entre otros
 
+CREATE NONCLUSTERED INDEX IDX_cliente
+ON nombreBase.cliente (categoria, tipoCliente);
+
+CREATE NONCLUSTERED INDEX IDX_producto
+ON nombreBase.producto (precioUnitario,estaDescontinuado);
+
+CREATE NONCLUSTERED INDEX IDX_item
+ON nombreBase.item (monto,cantidad,idOrden,idProducto);
+
+CREATE INDEX IDX_ordenCompra
+ON nombreBase.ordenCompra (fecha,idOrden,montoTotal,idEstado,montoDescuento,idCuponDescuento,fechaAplicacionDescuento);
+
+CREATE NONCLUSTERED INDEX IDX_ordenCompraCancelada
+ON nombreBase.ordenCompraCancelada (fechaCancelacion,explicacionCliente,cedulaCliente)
+
+CREATE NONCLUSTERED INDEX IDX_clienteFisico
+ON nombreBase.clienteFisico (primerNombre,segundoNombre, primerApellido, segundoApellido, idGenero)
+
+CREATE NONCLUSTERED INDEX IDX_clienteJuridico
+ON nombreBase.clienteFisico (razonSocial)
+
+CREATE NONCLUSTERED INDEX IDX_inventario
+ON nombreBase.inventario (cantidadDisponible,fechaIngreso,cantidadMinimaPermitida)
+
+CREATE NONCLUSTERED INDEX IDX_bitacoraRegistroAuditoria
+ON nombreBase.itacoraRegistroAuditoria (idTipoRegistroAuditoria,fechaHora,idEmpleado,detalle)
 
 
     
