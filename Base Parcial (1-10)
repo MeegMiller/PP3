@@ -1,6 +1,6 @@
 -- Creacion de las tablas 
 -----------------------------------1
-create table nombreBase.empleado(
+create table tiendaTEC.empleado(
 idEmpleado int IDENTITY(1,1),
 cedula int NOT NULL,
 fechaNacimiento date NOT NULL,
@@ -27,7 +27,7 @@ FOREIGN KEY (idDepartamento) REFERENCES departamento(idDepartamento)
 );
 
 -----------------------------------2
-create table nombreBase.genero(
+create table tiendaTEC.genero(
 idGenero int IDENTITY(1,1),
 detalle varchar(30) NOT NULL,
 
@@ -36,7 +36,7 @@ PRIMARY KEY (idGenero)
 );
 
 -----------------------------------3
-create table nombreBase.departamento(
+create table tiendaTEC.departamento(
 idDepartamento int IDENTITY(1,1),
 abreviaturaDepartamento varchar(30) NOT NULL,
 cuentaCorreoDepartamental varchar(30) NOT NULL,
@@ -50,7 +50,7 @@ PRIMARY KEY (idDepartamento)
 );
 
 -----------------------------------4
-create table nombreBase.contactoEmergencia(
+create table tiendaTEC.contactoEmergencia(
 idContantoEmergencia int IDENTITY(1,1),
 idEmpleado int NOT NULL,
 idGenero int NOT NULL,
@@ -72,7 +72,7 @@ FOREIGN KEY (idParentesco) REFERENCES parentesco(idParentesco)
 );
 
 -----------------------------------5
-create table nombreBase.parentesco(
+create table tiendaTEC.parentesco(
 idParentesco int IDENTITY(1,1),
 detalle varchar(30) NOT NULL,
 
@@ -81,7 +81,7 @@ PRIMARY KEY (idParentesco)
 );
 
 -----------------------------------6
-create table nombreBase.pais(
+create table tiendaTEC.pais(
 idPais int IDENTITY(1,1),
 abreviaturaPais varchar(30) NOT NULL,
 detalle varchar(30) NOT NULL,
@@ -91,7 +91,7 @@ PRIMARY KEY (idPais)
 );
 
 -----------------------------------7
-create table nombreBase.provinciaEstado(
+create table tiendaTEC.provinciaEstado(
 idProvinciaEstado int IDENTITY(1,1),
 idPais int NOT NULL,
 nombre varchar(30) NOT NULL,
@@ -104,7 +104,7 @@ FOREIGN KEY (idPais) REFERENCES pais(idPais)
 );
 
 -----------------------------------8
-create table nombreBase.cliente(
+create table tiendaTEC.cliente(
 cedulaCliente int NOT NULL,
 idPais int NOT NULL,
 idProvinciaEstado int NOT NULL,
@@ -129,7 +129,7 @@ FOREIGN KEY (idProvinciaEstado) REFERENCES provinciaEstado(idProvinciaEstado)
 );
 
 -----------------------------------9
-create table nombreBase.clienteFisico(
+create table tiendaTEC.clienteFisico(
 cedulaCliente int NOT NULL,
 idGenero int NOT NULL,
 primerNombre varchar(30) NOT NULL,
@@ -149,7 +149,7 @@ FOREIGN KEY (cedulaCliente) REFERENCES cliente(cedulaCliente)
 );
 
 -----------------------------------10
-create table nombreBase.clienteJuridico(
+create table tiendaTEC.clienteJuridico(
 cedualCliente int NOT NULL,
 razonSocial varchar(30) NOT NULL,
 
