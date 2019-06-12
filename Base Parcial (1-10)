@@ -247,9 +247,23 @@ AS
 SELECT nombreBase.cliente.cedulaCliente,nombreBase.cliente.email, nombreBase.cliente.tipoCliente,nombreBase.cliente.categoria,nombreBase.ordenCompra.idOrden,nombreBase.ordenCompra.idCuponDescuento
 FROM nombreBase.cliente AS clienteC1 
 INNER JOIN nombreBase.ordenCompra AS clienteC2 ON clienteC1.cedulaCliente = clienteC2.cedulaCliente;
+WHERE nombreBase.ordenCompra.idCuponDescuento <> NULL
 GO 
 
+--Views #12: vista que contenga la información de las ordenes de compras canceladas en el mes actual así como la razón de cancelación 
+--indicada por el cliente, deben ser agrupadas según el cliente
 
+CREATE VIEW ordenesCanceladas
+AS
+SELECT nombreBase.ordenCompraCancelada.idOrden,nombreBase.ordenCompraCancelada.fechaCancelacion,nombreBase.ordenCompraCancelada.cedulaCliente
+FROM nombreBase.ordenCompraCancelada
+WHERE MONTH(nombreBase.ordenCompraCancelada.fechaCancelacion) = MONTH(getdate())
+GROUP BY nombreBase.ordenCompraCancelada.cedulaCliente
+GO
+
+--Indice #14: crear todos los indices necesarios para acelerar los procesos de busqueda
+--en las tablas, especialmente en tablas que tendrán un crecimiento rápido como lo son:
+--cliente, producto, item, ordenDeCompra, entre otros
 
 
 
