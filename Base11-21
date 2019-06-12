@@ -90,7 +90,7 @@ create table .bitacoraRegistroAuditoria(
 create table .tipoRegistroAuditoria(
   idTipoRegistroAuditoria int IDENTITY(1,1) PRIMARY KEY,
   detalle varchar(30) NOT NULL PRIMARY KEY,
-  CONSTRAINT detalleRegistro_CHK CHECK (detalle='cuponCreado' OR detalle='cuponAplicado' OR detalle='ordenCreada' OR detalle='cantidadMinimaSuperada' OR detalle='proveedorCreado')
+  CONSTRAINT detalleRegistro_CHK CHECK (detalle='cuponCreado' OR detalle='cuponAplicado' OR detalle='ordenCreada' OR detalle='cantidadMinimaSuperada' OR detalle='proveedorCreado' OR detalle='proveedorDadoDeBaja' )
 );
 
 create table .cuponDescuento(
@@ -107,9 +107,17 @@ create table .cuponDescuento(
 );
 
 create table .ordenCompraCancelada(
-  idOrden int IDENTITY(1,1) PRIMARY KEY,
+  idOrden int PRIMARY KEY,
   fechaCancelacion date NOT NULL,
   explicacionCliente varchar(40) NOT NULL,
+);
+
+create table .ordenCancelada(
+  idOrdenCancelada int IDENTITY(1,1) PRIMARY KEY,
+  idOrden int NULL,
+  fechaCancelacion date NULL,
+  idOrden FOREIGN KEY REFERENCES ordenCompraCancelada(idOrden),
+  fechaCancelacion FOREIGN KEY REFERENCES ordenCompraCancelada(fechaCancelacion)
 );
 
 /*Función #1 */
@@ -145,11 +153,25 @@ go
 /*Procedimiento almacenado #6*/
 
 
-/*Trigeer #9*/
+/*Trigger #9*/
+CREATE TRIGGER auditoriaOrdenes
+AFTER INSERT ON .ordenCompraCancelada
+AS BEGIN
+FOR EACH ROW
+INSERT INSERT INTO ordenCancelada (idOrden, fechaCancelacion)
+VALUES (new.idOrden, new.fechaCancelacion)
+END
+GO
 
-
-/*Trigeer #10*/
-
+/*Trigger #10*/
+CREATE TRIGGER auditoriaProveedores
+AFTER UPDATE ON .proveedores
+AS BEGIN
+FOR EACH ROW
+INSERT INSERT INTO bitacoraRegistroAuditoria (fechaHora, detalle, idTipoRegistroAuditoria, idEmpleado)
+VALUES (getdatetime(), new.detalle, new.idTipoRegistroAuditoria, new.idEmpleado)
+END
+GO
 
 /*Vista #13 */
 CREATE VIEW productosNoVendidos AS
