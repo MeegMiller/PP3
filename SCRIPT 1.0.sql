@@ -208,10 +208,10 @@ create table tiendaTEC.ordenCompra(
   idOrden int IDENTITY(1,1) PRIMARY KEY,
   cedulaCliente int NOT NULL,
   fecha date NOT NULL,
-  montoTotal money NOT NULL,
+  montoTotal int NOT NULL,
   fechaAplicacionDescuento date,
-  montoDescuento int DEFAULT '0' FOREIGN KEY REFERENCES tiendaTEC.cuponDescuento(idCuponDescuento),
-  idCuponDescuento int FOREIGN KEY REFERENCES tiendaTEC.cliente(cedulaCliente),
+  montoDescuento int DEFAULT '0',
+  idCuponDescuento int FOREIGN KEY REFERENCES tiendaTEC.cuponDescuento(idCuponDescuento),
 );
 
 CREATE TRIGGER actualizarDescuento 
@@ -271,8 +271,8 @@ create table tiendaTEC.ordenCompraCancelada(
 
 create table tiendaTEC.ordenCancelada(
   idOrdenCancelada int IDENTITY(1,1) PRIMARY KEY,
-  idOrden INT NULL FOREIGN KEY REFERENCES tiendaTEC.ordenCompraCancelada(idOrden),
-  fechaCancelacion date NULL,
+  idOrden INT NOT NULL FOREIGN KEY REFERENCES tiendaTEC.ordenCompraCancelada(idOrden),
+  fechaCancelacion date NOT NULL,
 );
 
 /*Función #1 */
