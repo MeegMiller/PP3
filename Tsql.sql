@@ -32,7 +32,7 @@ Exec descuentoAplicado @cuponDescuento='20'
 
 --Función #3 -------------------------------------------------------------------------------------
 
-REATE FUNCTION promedialCompras (@cedulaCliente int, @fecha date) 
+CREATE FUNCTION promedialCompras (@cedulaCliente int, @fecha date) 
 RETURNS int
 AS
 BEGIN
