@@ -127,6 +127,7 @@ create table tiendaTEC.ordenCompra(
   fechaAplicacionDescuento date,
   montoDescuento int DEFAULT '0',
   idCuponDescuento int FOREIGN KEY REFERENCES tiendaTEC.cuponDescuento(idCuponDescuento),
+  idEstado int FOREIGN KEY REFERENCES tiendaTEC.ordenDeCompraEstado(idEstado)
 );
 
 create table tiendaTEC.cuponDescuento(
