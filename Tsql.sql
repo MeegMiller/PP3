@@ -89,14 +89,14 @@ END;
 --Trigger #8 -------------------------------------------------------------------------------------
 
 CREATE TRIGGER cantidadMinimaPermitida
-ON tiendaTEC.inventarioProductos
+ON tiendaTEC.inventario
 AFTER UPDATE
 AS
-IF EXISTS(select * from tiendaTEC.inventarioProductos where cantidadDisponible < cantidadMinimaPermitida)
+IF EXISTS(select * from tiendaTEC.inventario where cantidadDisponible < cantidadMinimaPermitida)
 	BEGIN
 		declare @producto varchar(50)
 		declare @correoDepartamental varchar(50)
-		set @producto = (select top 1 nombre+' necesita reabastecer' from tiendaTEC.producto P inner join tiendaTEC.inventarioProductos I on I.idProducto = P.idProducto)
+		set @producto = (select top 1 nombre+' necesita reabastecer' from tiendaTEC.producto P inner join tiendaTEC.inventario I on I.idProducto = P.idProducto)
 		set @correoDepartamental = (select tiendaTEC.departamento.detalle from tiendaTEC.departamento cd inner join Departamento d on d.idDepartamento = 
 		cd.idDepartamento where cd.idDepartamento = 1)
 		EXEC msdb.dbo.sp_send_dbmail
@@ -170,7 +170,8 @@ SELECT nombre
 FROM tiendaTEC.producto a, tiendaTEC.item b
 WHERE a.idProducto <> b.idProducto;
 
---Indice #14 --Indice #14
+--Indice #14 ------------------------------------------------------------------------------------
+
 CREATE NONCLUSTERED INDEX IDX_cliente
 ON tiendaTEC.cliente (categoria, tipoCliente);
 
@@ -197,29 +198,4 @@ ON tiendaTEC.inventario (cantidadDisponible,fechaIngreso,cantidadMinimaPermitida
 
 CREATE NONCLUSTERED INDEX IDX_bitacoraRegistroAuditoria
 ON tiendaTEC.bitacoraRegistroAuditoria (idTipoRegistroAuditoria,fechaHora,idEmpleado,detalle)
-CREATE NONCLUSTERED INDEX IDX_cliente
-ON tiendaTEC.cliente (categoria, tipoCliente);
 
-CREATE NONCLUSTERED INDEX IDX_producto
-ON tiendaTEC.producto (precioUnitario,estaDescontinuado);
-
-CREATE NONCLUSTERED INDEX IDX_item
-ON tiendaTEC.item (monto,cantidad,idOrden,idProducto);
-
-CREATE INDEX IDX_ordenCompra
-ON tiendaTEC.ordenCompra (fecha,idOrden,montoTotal,idEstado,montoDescuento,idCuponDescuento,fechaAplicacionDescuento);
-
-CREATE NONCLUSTERED INDEX IDX_ordenCompraCancelada
-ON tiendaTEC.ordenCompraCancelada (fechaCancelacion,explicacionCliente,cedulaCliente)
-
-CREATE NONCLUSTERED INDEX IDX_clienteFisico
-ON tiendaTEC.clienteFisico (primerNombre,segundoNombre, primerApellido, segundoApellido, idGenero)
-
-CREATE NONCLUSTERED INDEX IDX_clienteJuridico
-ON tiendaTEC.clienteFisico (razonSocial)
-
-CREATE NONCLUSTERED INDEX IDX_inventario
-ON tiendaTEC.inventario (cantidadDisponible,fechaIngreso,cantidadMinimaPermitida)
-
-CREATE NONCLUSTERED INDEX IDX_bitacoraRegistroAuditoria
-ON tiendaTEC.bitacoraRegistroAuditoria (idTipoRegistroAuditoria,fechaHora,idEmpleado,detalle)
