@@ -66,7 +66,7 @@ GO
 (FALTA)
 
 --Procedimiento almacenado #7 -------------------------------------------------------------------------------------
-
+CREATE PROCEDURE nuevoProducto
 @idProducto as int,
 @nombre as varchar (100),
 @idProveedor as int,
