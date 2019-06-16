@@ -29,18 +29,26 @@ INSERT INTO tiendaTEC.producto(nombre, precioUnitario, estaDescontinuado, idProv
 INSERT INTO tiendaTEC.producto(nombre, precioUnitario, estaDescontinuado, idProveedor) VALUES ('Cascos','10000','A','4');
 
 /*Tabla ordenCompra*/
-
+INSERT INTO tiendaTEC.ordenCompra(cedulaCliente, fecha, montoTotal, fechaAplicacionDescuento, idCuponDescuento, idEstado) VALUES ('117540914','04-08-2019','15000','1');
+INSERT INTO tiendaTEC.ordenCompra(cedulaCliente, fecha, montoTotal, fechaAplicacionDescuento, idCuponDescuento, idEstado) VALUES ('125639874','09-08-2019','7200','4');
+INSERT INTO tiendaTEC.ordenCompra(cedulaCliente, fecha, montoTotal, fechaAplicacionDescuento, idCuponDescuento, idEstado) VALUES ('700980498','04-08-2019','5000','2');
+INSERT INTO tiendaTEC.ordenCompra(cedulaCliente, fecha, montoTotal, fechaAplicacionDescuento, idCuponDescuento, idEstado) VALUES ('305698745','07-08-2019','12000','6');
+INSERT INTO tiendaTEC.ordenCompra(cedulaCliente, fecha, montoTotal, fechaAplicacionDescuento, idCuponDescuento, idEstado) VALUES ('802365478','05-08-2019','90000','06-08-2019','1','2');
 
 /*Tabla ordenDeCompraEstado*/
-INSERT INTO tiendaTEC.ordenDeCompraEstado(detalle) VALUES ('En preparaciÛn');
-INSERT INTO tiendaTEC.ordenDeCompraEstado(detalle) VALUES ('en tr·nsito');
+INSERT INTO tiendaTEC.ordenDeCompraEstado(detalle) VALUES ('En preparaci√≥n');
+INSERT INTO tiendaTEC.ordenDeCompraEstado(detalle) VALUES ('en tr√°nsito');
 INSERT INTO tiendaTEC.ordenDeCompraEstado(detalle) VALUES ('cancelada');
 INSERT INTO tiendaTEC.ordenDeCompraEstado(detalle) VALUES ('entregada');
 INSERT INTO tiendaTEC.ordenDeCompraEstado(detalle) VALUES ('con retraso');
 INSERT INTO tiendaTEC.ordenDeCompraEstado(detalle) VALUES ('extraviado');
 
 /*Tabla Item*/
-
+INSERT INTO tiendaTEC.item(monto, cantidad, idOrden, idProducto) VALUES ('15000','15','1','1')
+INSERT INTO tiendaTEC.item(monto, cantidad, idOrden, idProducto) VALUES ('7200','12','2','2')
+INSERT INTO tiendaTEC.item(monto, cantidad, idOrden, idProducto) VALUES ('5000','10','3','3')
+INSERT INTO tiendaTEC.item(monto, cantidad, idOrden, idProducto) VALUES ('12000','40','4','4')
+INSERT INTO tiendaTEC.item(monto, cantidad, idOrden, idProducto) VALUES ('90000','90','5','5')
 
 /*Tabla tipoRegistroAuditoria*/
 INSERT INTO tiendaTEC.tipoRegistroAuditoria(detalle) VALUES ('cuponCreado');
@@ -51,10 +59,15 @@ INSERT INTO tiendaTEC.tipoRegistroAuditoria(detalle) VALUES('proveedorCreado');
 INSERT INTO tiendaTEC.tipoRegistroAuditoria(detalle) VALUES('proveedorDadoDeBaja');
 
 /*Tabla cuponDescuento*/
-INSERT INTO tiendaTEC.cuponDescuento(detalleCodigo, porcentajeDescuento, fechaInicioVigencia, fechaFinVigencia, montoMinimoCompraParaAplicarCupon, disponibilidadTipo, estaActivo) VALUES('','','','','','','');
-INSERT INTO tiendaTEC.cuponDescuento(detalleCodigo, porcentajeDescuento, fechaInicioVigencia, fechaFinVigencia, montoMinimoCompraParaAplicarCupon, disponibilidadTipo, estaActivo) VALUES('','','','','','','');
-INSERT INTO tiendaTEC.cuponDescuento(detalleCodigo, porcentajeDescuento, fechaInicioVigencia, fechaFinVigencia, montoMinimoCompraParaAplicarCupon, disponibilidadTipo, estaActivo) VALUES('','','','','','','');
-INSERT INTO tiendaTEC.cuponDescuento(detalleCodigo, porcentajeDescuento, fechaInicioVigencia, fechaFinVigencia, montoMinimoCompraParaAplicarCupon, disponibilidadTipo, estaActivo) VALUES('','','','','','','');
-INSERT INTO tiendaTEC.cuponDescuento(detalleCodigo, porcentajeDescuento, fechaInicioVigencia, fechaFinVigencia, montoMinimoCompraParaAplicarCupon, disponibilidadTipo, estaActivo) VALUES('','','','','','','');
+INSERT INTO tiendaTEC.cuponDescuento(detalleCodigo, porcentajeDescuento, fechaInicioVigencia, fechaFinVigencia, montoMinimoCompraParaAplicarCupon, disponibilidadTipo, estaActivo) VALUES('UHASU','40','02-08-2019','03-09-2019','5000','A','A');
+INSERT INTO tiendaTEC.cuponDescuento(detalleCodigo, porcentajeDescuento, fechaInicioVigencia, fechaFinVigencia, montoMinimoCompraParaAplicarCupon, disponibilidadTipo, estaActivo) VALUES('SKLSW','20','02-08-2019','03-08-2019','10000','B','A');
+INSERT INTO tiendaTEC.cuponDescuento(detalleCodigo, porcentajeDescuento, fechaInicioVigencia, fechaFinVigencia, montoMinimoCompraParaAplicarCupon, disponibilidadTipo, estaActivo) VALUES('WDWDA','50','02-08-2019','03-09-2019','8000','C','A');
+INSERT INTO tiendaTEC.cuponDescuento(detalleCodigo, porcentajeDescuento, fechaInicioVigencia, fechaFinVigencia, montoMinimoCompraParaAplicarCupon, disponibilidadTipo, estaActivo) VALUES('EOIUJ','10','02-08-2019','03-10-2019','15000','D','A');
+INSERT INTO tiendaTEC.cuponDescuento(detalleCodigo, porcentajeDescuento, fechaInicioVigencia, fechaFinVigencia, montoMinimoCompraParaAplicarCupon, disponibilidadTipo, estaActivo) VALUES('UIHHJ','20','02-08-2019','03-12-2019','1000','A','A');
 
 /*Tabla ordenCompraCancelada*/
+INSERT INTO tiendaTEC.ordenCompraCancelada(idOrden, cedulaCliente, fechaCancelacion, explicacionCliente) VALUES ('1','117540914','05-08-2019','Defectuoso');
+INSERT INTO tiendaTEC.ordenCompraCancelada(idOrden, cedulaCliente, fechaCancelacion, explicacionCliente) VALUES ('2','125639874','10-08-2019','No lo que esperaba');
+INSERT INTO tiendaTEC.ordenCompraCancelada(idOrden, cedulaCliente, fechaCancelacion, explicacionCliente) VALUES ('3','700980498','05-08-2019','Diferente material');
+
+
